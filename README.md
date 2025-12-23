@@ -1,20 +1,60 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# HR Talent Hub - Lottery & Teams
 
-# Run and deploy your AI Studio app
+A React application for HR/Talent management, built with Vite and React using TypeScript.
 
-This contains everything you need to run your app locally.
+## 🚀 Getting Started
 
-View your app in AI Studio: https://ai.studio/apps/drive/1agNUskVTNKvAMhKSrxV_Gv58EIN2iNav
+### Prerequisites
+- Node.js (version 20 or higher recommended)
+- npm
 
-## Run Locally
+### Installation
 
-**Prerequisites:**  Node.js
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd hr-talent-hub---lottery-&-teams
+   ```
 
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+3. Configure Environment Variables:
+   - Create a `.env` file in the root directory if needed (see `.env.example` if available, or refer to `env.local` instructions).
+   - **Note**: Ensure `GEMINI_API_KEY` is set in `.env` or `.env.local` if using Gemini features.
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+
+## 📜 Available Scripts
+
+- `npm run dev`: Starts the development server.
+- `npm run build`: Builds the app for production to the `dist` folder.
+- `npm run preview`: Locally preview the production build.
+
+## 🛠 Project Structure
+
+```
+├── .github/workflows   # GitHub Actions (Deployment)
+├── src/                # Source code
+├── dist/               # Production build output
+├── public/             # Static assets
+└── ...
+```
+
+## 🚀 Deployment
+
+This project is configured to deploy automatically to **GitHub Pages** using GitHub Actions.
+
+1. Push changes to the `main` branch.
+2. The `Deploy to GitHub Pages` action will trigger automatically.
+3. Once valid, the site will be live at your GitHub Pages URL.
+
+**Note**: You need to enable GitHub Pages in your repository settings:
+- Go to **Settings** > **Pages**
+- Build and deployment source: **GitHub Actions**
