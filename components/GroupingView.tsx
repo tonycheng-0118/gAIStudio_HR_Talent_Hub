@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Participant, Group } from '../types';
 import { GoogleGenAI } from "@google/genai";
 
@@ -13,7 +13,6 @@ const GroupingView: React.FC<GroupingViewProps> = ({ participants }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isNamingGroups, setIsNamingGroups] = useState(false);
 
-  // Fix: Explicitly type shuffleArray to ensure correct type inference for Participant[] and avoid unknown[] issues
   const shuffleArray = (array: Participant[]): Participant[] => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -25,7 +24,6 @@ const GroupingView: React.FC<GroupingViewProps> = ({ participants }) => {
 
   const handleGroup = () => {
     setIsGenerating(true);
-    // Add small delay for feel
     setTimeout(() => {
       const shuffled = shuffleArray(participants);
       const newGroups: Group[] = [];
@@ -48,7 +46,6 @@ const GroupingView: React.FC<GroupingViewProps> = ({ participants }) => {
     setIsNamingGroups(true);
     
     try {
-      // Fix: Create GoogleGenAI instance right before making an API call to ensure it uses the most up-to-date environment config
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const prompt = `我們有 ${groups.length} 個團隊，請為每個團隊生成一個富有創意且專業的中文隊名。主題可以跟創新、合作、卓越相關。只需要返回隊名列表，以逗號分隔。`;
       
@@ -57,7 +54,6 @@ const GroupingView: React.FC<GroupingViewProps> = ({ participants }) => {
         contents: prompt,
       });
 
-      // Fix: The text content is a property on GenerateContentResponse, not a method
       const namesText = response.text || "";
       const names = namesText.split(/[,，\n]+/).map(n => n.trim()).filter(n => n.length > 0);
       
@@ -70,6 +66,25 @@ const GroupingView: React.FC<GroupingViewProps> = ({ participants }) => {
     } finally {
       setIsNamingGroups(false);
     }
+  };
+
+  const exportToCSV = () => {
+    if (groups.length === 0) return;
+    
+    let csvContent = "data:text/csv;charset=utf-8,組別,成員姓名\n";
+    groups.forEach(group => {
+      group.members.forEach(member => {
+        csvContent += `${group.name},${member.name}\n`;
+      });
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `分組名單_${new Date().toLocaleDateString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -100,13 +115,21 @@ const GroupingView: React.FC<GroupingViewProps> = ({ participants }) => {
             {isGenerating ? '分組中...' : '生成分組'}
           </button>
           {groups.length > 0 && (
-            <button 
-              onClick={smartRenameGroups}
-              disabled={isNamingGroups}
-              className="px-6 py-3 bg-white border border-indigo-200 text-indigo-600 font-bold rounded-2xl shadow-sm hover:bg-indigo-50 transition-all flex items-center gap-2"
-            >
-              <span>{isNamingGroups ? '✨ 思考中...' : '✨ AI 創意隊名'}</span>
-            </button>
+            <>
+              <button 
+                onClick={smartRenameGroups}
+                disabled={isNamingGroups}
+                className="px-6 py-3 bg-white border border-indigo-200 text-indigo-600 font-bold rounded-2xl shadow-sm hover:bg-indigo-50 transition-all flex items-center gap-2"
+              >
+                <span>{isNamingGroups ? '✨ 思考中...' : '✨ AI 創意隊名'}</span>
+              </button>
+              <button 
+                onClick={exportToCSV}
+                className="px-6 py-3 bg-slate-800 text-white font-bold rounded-2xl shadow-lg hover:bg-slate-900 transition-all flex items-center gap-2"
+              >
+                <span>📥 匯出 CSV</span>
+              </button>
+            </>
           )}
         </div>
       </div>
